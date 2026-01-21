@@ -1,0 +1,97 @@
+{
+  /* Set how to handle untrusted files: can choose to open, view, or be blocked. */
+  "security.workspace.trust.untrustedFiles": "open",
+
+  /* Set the default encoding of files to utf8. */
+  "files.encoding": "utf8",
+  
+  /* Automatically guess file encoding, suitable for opening files with unknown encoding. */
+  "files.autoGuessEncoding": true,
+
+//   /* Default font size of the editor. */
+//   "editor.fontSize": 16,
+
+//   /* Disable font ligatures. */
+//   "editor.fontLigatures": false,
+  
+//   "editor.tokenColorCustomizations": {
+//     "textMateRules": [
+//       /* Set macro definitions to red */
+//       {
+//         "scope": "entity.name.function.preprocessor.c",
+//         "settings": { "foreground": "#eb6d6d" }
+//       },
+//       /* Set enumeration type variables to red */
+//       {
+//         "scope": "variable.other.enummember.c",
+//         "settings": { "foreground": "#eb6d6d" }
+//       },
+//        /* Set global variables to red */
+//       {
+//         "scope": "variable.other.global.c",
+//         "settings": {
+//           "foreground": "#eb6d6d"
+//         }
+//       },   
+//        /* Set static keyword to red */
+//        {
+//         "scope": "storage.modifier.c",
+//         "settings": {
+//           "foreground": "#eb6d6d"
+//         }
+//       }
+//     ]
+//   },
+//   /* Enable preview from quick open in workbench editor */
+//   "workbench.editor.enablePreviewFromQuickOpen": true,
+//   /* Hide arrays in outline view */
+//   "outline.showArrays": false,
+//   /* Hide booleans in outline view */
+//   "outline.showBooleans": false,
+//   /* Hide classes in outline view */
+//   "outline.showClasses": false,
+//   /* Hide constants in outline view */
+//   "outline.showConstants": false,
+//   /* Hide constructors in outline view */
+//   "outline.showConstructors": false,
+//   /* Hide enum members in outline view */
+//   "outline.showEnumMembers": false,
+//   /* Hide enums in outline view */
+//   "outline.showEnums": false,
+//   /* Hide events in outline view */
+//   "outline.showEvents": false,
+//   /* Hide fields in outline view */
+//   "outline.showFields": false,
+//   /* Hide files in outline view */
+//   "outline.showFiles": false,
+//   /* Hide variables in outline view */
+//   "outline.showVariables": false,
+//   /* Hide strings in outline view */
+//   "outline.showStrings": false,
+//   /* Hide properties in outline view */
+//   "outline.showProperties": false,
+//   /* Hide packages in outline view */
+//   "outline.showPackages": false,
+//   /* Hide operators in outline view */
+//   "outline.showOperators": false,
+//   /* Hide objects in outline view */
+//   "outline.showObjects": false,
+//   /* Hide numbers in outline view */
+//   "outline.showNumbers": false,
+//   /* Hide methods in outline view */
+//   "outline.showMethods": false,
+//   /* Hide keys in outline view */
+//   "outline.showKeys": false,
+//   /* Hide interfaces in outline view */
+//   "outline.showInterfaces": false,
+//   /* Hide modules in outline view */
+//   "outline.showModules": false,
+//   /* Hide namespaces in outline view */
+//   "outline.showNamespaces": false,
+//   /* Hide null in outline view */
+//   "outline.showNull": false,
+//   /* Hide type parameters in outline view */
+//   "outline.showTypeParameters": false
+ 
+
+}
