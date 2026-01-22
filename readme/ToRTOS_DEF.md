@@ -258,7 +258,7 @@ bitmap: b00011011 (LSB=prio0)
 遍历到 130 停止，插入其前
 ```
 
-比较采用：
+根据 TIMER_USE_OVERFLOW_LIST 选择采用：
 ```
 (s_int32_t)(current_tick - node->timeout_tick) >= 0
 ```
