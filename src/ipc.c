@@ -21,7 +21,7 @@ t_status_t t_ipc_suspend(t_list_t *sentinel, t_thread_t *thread, t_uint8_t flag)
     register t_uint32_t level;
     t_list_t *p;
 
-    if (sentinel == NULL || thread == NULL)
+    if (!sentinel || !thread)
         return T_NULL;
 
     /* enter critical */
@@ -72,7 +72,7 @@ t_status_t t_ipc_list_resume_all(t_list_t *sentinel)
     register t_uint32_t level;
     t_thread_t *thread;
 
-    if (sentinel == NULL)
+    if (!sentinel)
         return T_NULL;
 
     while (!t_list_isempty(sentinel))
@@ -90,9 +90,9 @@ t_status_t t_ipc_list_resume_all(t_list_t *sentinel)
 /* Delete an IPC object and wake waiting threads */
 t_status_t t_ipc_delete(t_ipc_t *ipc)
 {
-    if (ipc == NULL) 
+    if (!ipc) 
         return T_NULL;
-    if (ipc->status == 0) 
+    if (0 == ipc->status) 
         return T_OK;
 
     if (!t_list_isempty(&ipc->wait_list))
@@ -185,16 +185,16 @@ t_status_t t_sema_send(t_ipc_t *ipc)
     register t_uint32_t level;
     t_uint8_t need_schedule = 0;
 
-    if (ipc == NULL) 
+    if (!ipc) 
         return T_NULL;
-    if (ipc->status == 0) 
+    if (0 == ipc->status) 
         return T_DELETED;
     if(IPC_SEMA != ipc->type)
         return T_INVALID;   
 
     level = t_irq_disable();
 
-    if (ipc->status == 0)
+    if (0 == ipc->status)
     {
         t_irq_enable(level);
         return T_DELETED;
@@ -223,9 +223,9 @@ t_status_t t_sema_recv(t_ipc_t *ipc, t_int32_t timeout)
     register t_uint32_t level;
     t_uint32_t start_tick = 0;
 
-    if (ipc == NULL) 
+    if (!ipc) 
         return T_NULL;
-    if (ipc->status == 0) 
+    if (0 == ipc->status) 
         return T_DELETED;   
     if(IPC_SEMA != ipc->type)
         return T_INVALID;   
@@ -233,7 +233,7 @@ t_status_t t_sema_recv(t_ipc_t *ipc, t_int32_t timeout)
     {
         level = t_irq_disable();
 
-        if (ipc->status == 0)
+        if (0 == ipc->status)
         {
             t_irq_enable(level);
             return T_DELETED;
@@ -245,7 +245,7 @@ t_status_t t_sema_recv(t_ipc_t *ipc, t_int32_t timeout)
             return T_OK;
         }
 
-        if (timeout == 0)
+        if (0 == timeout)
         {
             t_irq_enable(level);
             return T_ERR;
@@ -267,7 +267,7 @@ t_status_t t_sema_recv(t_ipc_t *ipc, t_int32_t timeout)
         t_sched_switch();   /* thread will sleep */
 
         /* ---- after wake up ---- */
-        if (ipc->status == 0)
+        if (0 == ipc->status)
             return T_DELETED;
 
         /* check timeout */
@@ -357,14 +357,14 @@ t_status_t t_mutex_send_base(t_ipc_t *ipc)
     (void)start_tick;
     t_uint8_t need_schedule = 0;
 
-    if (ipc == NULL) 
+    if (!ipc) 
         return T_NULL;
-    if (ipc->status == 0) 
+    if (0 == ipc->status) 
         return T_DELETED;
 
     level = t_irq_disable();
 
-    if (ipc->status == 0)
+    if (0 == ipc->status)
     {
         t_irq_enable(level);
         return T_DELETED;
@@ -425,20 +425,20 @@ t_status_t t_mutex_recv_base(t_ipc_t *ipc, t_int32_t timeout)
     register t_uint32_t level;
     t_uint32_t start_tick = 0;
 
-    if (ipc == NULL) 
+    if (!ipc) 
         return T_NULL;
-    if (ipc->status == 0) 
+    if (0 == ipc->status) 
         return T_DELETED;  
     while (1)
     {
         level = t_irq_disable();
 
-        if (ipc->status == 0)
+        if (0 == ipc->status)
         {
             t_irq_enable(level);
             return T_DELETED;
         }
-        if (ipc->msg_waiting == 1)
+        if (1 == ipc->msg_waiting)
         {
             ipc->msg_waiting = 0;
             ipc->u.sema.holder = t_current_thread;
@@ -458,7 +458,7 @@ t_status_t t_mutex_recv_base(t_ipc_t *ipc, t_int32_t timeout)
             return T_OK;
         }
 
-        if (timeout == 0)
+        if (0 == timeout)
         {
             t_irq_enable(level);
             return T_ERR;
@@ -473,7 +473,7 @@ t_status_t t_mutex_recv_base(t_ipc_t *ipc, t_int32_t timeout)
             t_current_thread->current_priority > ipc->u.sema.holder->current_priority)
 #endif
         {
-            if (ipc->u.sema.original_prio == DUMMY_PRIORITY)
+            if (DUMMY_PRIORITY == ipc->u.sema.original_prio)
                 ipc->u.sema.original_prio = ipc->u.sema.holder->current_priority;
             t_thread_ctrl(ipc->u.sema.holder,
                             TO_THREAD_SET_PRIORITY,
@@ -494,7 +494,7 @@ t_status_t t_mutex_recv_base(t_ipc_t *ipc, t_int32_t timeout)
         t_sched_switch();
 
         /* after wake */
-        if (ipc->status == 0)
+        if (0 == ipc->status)
             return T_DELETED;
         if (ipc->u.sema.holder == t_current_thread)
             return T_OK;
@@ -598,9 +598,9 @@ t_status_t t_queue_send(t_ipc_t *ipc, const void *data, t_int32_t timeout)
     t_uint32_t start_tick = 0;
     t_uint8_t need_schedule = 0;
 
-    if (ipc == NULL) 
+    if (!ipc) 
         return T_NULL;
-    if (ipc->status == 0) 
+    if (0 == ipc->status) 
         return T_DELETED;    
     if(IPC_QUEUE != ipc->type)
         return T_INVALID;
@@ -631,13 +631,13 @@ t_status_t t_queue_send(t_ipc_t *ipc, const void *data, t_int32_t timeout)
         }
 
         /* Queue is full */
-        if (timeout == 0)
+        if (0 == timeout)
         {
             t_irq_enable(level);
             return T_ERR;
         }
 
-        if (t_current_thread == NULL)
+        if (!t_current_thread)
         {
             t_irq_enable(level);
             return T_UNSUPPORTED;
@@ -659,7 +659,7 @@ t_status_t t_queue_send(t_ipc_t *ipc, const void *data, t_int32_t timeout)
         t_sched_switch();
 
         /* After wake up, check status and timeout */
-        if (ipc->status == 0)
+        if (0 == ipc->status)
             return T_DELETED;
 
         if (timeout > 0 && TO_WAITING_FOREVER != timeout)
@@ -683,9 +683,9 @@ t_status_t t_queue_recv(t_ipc_t *ipc, void *data, t_int32_t timeout)
     register t_uint32_t level;
     t_uint32_t start_tick = 0;
 
-    if (ipc == NULL) 
+    if (!ipc) 
         return T_NULL;
-    if (ipc->status == 0) 
+    if (0 == ipc->status) 
         return T_DELETED;  
     if(IPC_QUEUE != ipc->type)
         return T_INVALID;
@@ -693,7 +693,7 @@ t_status_t t_queue_recv(t_ipc_t *ipc, void *data, t_int32_t timeout)
     {
         level = t_irq_disable();
 
-        if (ipc->status == 0)
+        if (0 == ipc->status)
         {
             t_irq_enable(level);
             return T_DELETED;
@@ -720,7 +720,7 @@ t_status_t t_queue_recv(t_ipc_t *ipc, void *data, t_int32_t timeout)
             return T_OK;
         }
 
-        if (timeout == 0)
+        if (0 == timeout)
         {
             t_irq_enable(level);
             return T_ERR;
@@ -742,7 +742,7 @@ t_status_t t_queue_recv(t_ipc_t *ipc, void *data, t_int32_t timeout)
         t_sched_switch();
 
         /* after wake: check again */
-        if (ipc->status == 0)
+        if (0 == ipc->status)
             return T_DELETED;
 
         if (timeout > 0 && TO_WAITING_FOREVER != timeout)
@@ -761,4 +761,4 @@ t_status_t t_queue_recv(t_ipc_t *ipc, void *data, t_int32_t timeout)
 
 #endif
 
-#endif /* TO_USING_IPC */ 
+#endif /* TO_USING_IPC */

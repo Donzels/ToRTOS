@@ -58,11 +58,11 @@ t_status_t t_thread_create_static(t_thread_entry_t entry,
                          t_uint32_t time_slice,
                          t_thread_t *thread)
 {
-    if (thread == NULL || entry == NULL || stackaddr == NULL || stacksize == 0)
+    if (!thread || !entry || !stackaddr || 0 == stacksize)
         return T_NULL;
     if (priority < 0 || priority >= TO_THREAD_PRIORITY_MAX)
         return T_INVALID;
-    if (time_slice == 0)
+    if (0 == time_slice)
         return T_INVALID;
 
     _t_thread_create(entry, stackaddr, stacksize, priority, arg, time_slice, thread);
@@ -83,11 +83,11 @@ t_status_t t_thread_create_static(t_thread_entry_t entry,
 #if (TO_USING_DYNAMIC_ALLOCATION)
 t_status_t t_thread_create(t_thread_entry_t entry, t_uint32_t stacksize, t_int8_t priority, void *arg, t_uint32_t time_slice, t_thread_t **thread_handle)
 {
-    if (entry == NULL || stacksize == 0)
+    if (!entry || 0 == stacksize)
         return T_NULL;
     if (priority < 0 || priority >= TO_THREAD_PRIORITY_MAX)
         return T_INVALID;
-    if (time_slice == 0)
+    if (0 == time_slice)
         return T_INVALID;
     t_thread_t *thread = t_malloc(sizeof(t_thread_t));
     if(!thread)
@@ -125,9 +125,9 @@ t_status_t t_thread_startup(t_thread_t *thread)
 {
     register t_uint32_t level;
 
-    if (thread == NULL)
+    if (!thread)
         return T_NULL;
-    if (thread->status == TO_THREAD_DELETED)
+    if (TO_THREAD_DELETED == thread->status)
         return T_ERR;
 
     level = t_irq_disable();
@@ -149,12 +149,12 @@ t_status_t t_thread_startup(t_thread_t *thread)
  */
 t_status_t t_thread_delete(t_thread_t *thread)
 {
-    if (thread == NULL)
+    if (!thread)
         return T_NULL;
 
-    if (thread->status == TO_THREAD_TERMINATED)
+    if (TO_THREAD_TERMINATED == thread->status)
         return T_OK;
-    if (thread->status == TO_THREAD_DELETED)
+    if (TO_THREAD_DELETED == thread->status)
         return T_ERR;
 
     t_sched_remove_thread(thread);
@@ -195,7 +195,7 @@ void t_delay(t_uint32_t tick)
 t_status_t t_thread_suspend(t_thread_t *thread)
 {
     register t_uint32_t level;
-    if (thread == NULL)
+    if (!thread)
         return T_NULL;
 
     level = t_irq_disable();
@@ -210,7 +210,7 @@ t_status_t t_thread_suspend(t_thread_t *thread)
  */
 t_status_t t_thread_ctrl(t_thread_t *thread, t_uint32_t cmd, void *arg)
 {
-    if (thread == NULL)
+    if (!thread)
         return T_NULL;
 
     switch (cmd)
@@ -269,7 +269,7 @@ void t_cleanup_waiting_termination_threads(void)
  */
 t_status_t t_thread_restart(t_thread_t *thread)
 {
-    if (thread == NULL)
+    if (!thread)
         return T_NULL;
     if (thread->status != TO_THREAD_DELETED)
         return T_ERR;
@@ -308,7 +308,7 @@ t_status_t t_thread_restart(t_thread_t *thread)
  */
 void t_thread_exit(void)
 {
-    if (t_current_thread == NULL)
+    if (!t_current_thread)
         return;
 
     register t_uint32_t level = t_irq_disable();

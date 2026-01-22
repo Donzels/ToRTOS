@@ -80,7 +80,7 @@ void *t_malloc(size_t wanted_size)
     {
         /* If this is the first call to malloc then the memory will require
         initialisation to setup the list of free blocks. */
-        if (is_inited == 0)
+        if (0 == is_inited)
         {
             t_mem_init();
             is_inited = 1;
@@ -158,7 +158,7 @@ void t_free(void *ptr)
     t_uint8_t *puc = (t_uint8_t *)ptr;
     t_mem_link_t *block;
 
-    if (ptr != NULL)
+    if (ptr)
     {
         /* The memory being freed will have an t_mem_link_t structure immediately
         before it. */

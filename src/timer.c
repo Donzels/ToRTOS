@@ -52,7 +52,7 @@ void t_timer_list_init(void)
  */
 t_uint32_t s_tick_from_ms(t_uint32_t ms)
 {
-    if (ms == 0)
+    if (0 == ms)
         return 0;
     return (ms * TO_TICK) / 1000;
 }
@@ -95,7 +95,7 @@ t_uint32_t get_tick_diff(t_uint32_t start_tick, t_uint32_t end_tick)
  */
 t_status_t t_timer_init(t_timer_t *timer, void (*timeout_func)(void *p), void *p, t_uint32_t tick)
 {
-    if (timer == NULL || timeout_func == NULL)
+    if (!timer || !timeout_func)
         return T_NULL;
 
     /* Initialize all list level links to self. */
@@ -131,7 +131,7 @@ void t_tick_increase(void)
     }
 #endif
     /* If scheduler not started yet, nothing else to process. */
-    if (t_current_thread == NULL)
+    if (!t_current_thread)
         return;
 
     thread = t_current_thread;
@@ -139,7 +139,7 @@ void t_tick_increase(void)
     /* Decrease remaining time slice atomically. */
     level = t_irq_disable();
     --thread->remaining_tick;
-    if (thread->remaining_tick == 0)/* time-slicing */
+    if (0 == thread->remaining_tick)/* time-slicing */
     {
         thread->remaining_tick = thread->init_tick;
         t_irq_enable(level);        
@@ -172,7 +172,7 @@ t_inline void s_timer_remove(t_timer_t *timer)
  */
 t_status_t t_timer_ctrl(t_timer_t *timer, t_uint32_t cmd, void *arg)
 {
-    if (timer == NULL)
+    if (!timer)
         return T_NULL;
 
     switch (cmd)
@@ -194,7 +194,7 @@ t_status_t t_timer_ctrl(t_timer_t *timer, t_uint32_t cmd, void *arg)
  */
 t_status_t t_timer_stop(t_timer_t *timer)
 {
-    if (timer == NULL)
+    if (!timer)
         return T_NULL;
 
     s_timer_remove(timer);
@@ -207,7 +207,7 @@ t_status_t t_timer_stop(t_timer_t *timer)
  */
 t_status_t t_timer_start(t_timer_t *timer)
 {
-    if (timer == NULL)
+    if (!timer)
         return T_NULL;
 
     register t_uint32_t level = t_irq_disable();
@@ -295,7 +295,7 @@ void t_timer_check(void)
 void timeout_function(void *p)
 {
     t_thread_t *thread = (t_thread_t *)p;
-    if (thread == NULL)
+    if (!thread)
         return;
 
     t_list_delete(&thread->tlist);    

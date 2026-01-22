@@ -32,10 +32,10 @@ int t_vsnprintf(char *buffer, size_t size, const char *fmt, va_list args)
 
     while (*fmt && ptr < end)
     {
-        if (*fmt == '%')
+        if ('%' == *fmt)
         {
             fmt++;
-            if (*fmt == 'd')
+            if ('d' == *fmt)
             {
                 int value = va_arg(args, int);
                 char temp[12];
@@ -55,18 +55,18 @@ int t_vsnprintf(char *buffer, size_t size, const char *fmt, va_list args)
                 while (len-- && ptr < end)
                     *ptr++ = temp[len];
             }
-            else if (*fmt == 's')
+            else if ('s' == *fmt)
             {
                 const char *str = va_arg(args, const char *);
                 while (*str && ptr < end)
                     *ptr++ = *str++;
             }
-            else if (*fmt == 'c')
+            else if ('c' == *fmt)
             {
                 char c = (char)va_arg(args, int);
                 if (ptr < end) *ptr++ = c;
             }
-            else if (*fmt == 'x')
+            else if ('x' == *fmt)
             {
                 unsigned int value = va_arg(args, unsigned int);
                 char temp[16];
@@ -82,7 +82,7 @@ int t_vsnprintf(char *buffer, size_t size, const char *fmt, va_list args)
                 while (len-- && ptr < end)
                     *ptr++ = temp[len];
             }
-            else if (*fmt == 'f')
+            else if ('f' == *fmt)
             {
                 double value = va_arg(args, double);
                 if (value < 0)

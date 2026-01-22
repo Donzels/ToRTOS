@@ -384,7 +384,7 @@ void mutex_high_get_thread(void *arg) /* High priority (waiting for mutex) */
     t_uint8_t i = 0;
     while (1)
     {
-        if (phase == 0)
+        if (0 == phase)
         {
             t_mdelay(100); /* Let low priority thread acquire mutex first to create inversion */
             t_printf("HIGH : try take mutex\n");
@@ -406,7 +406,7 @@ void mutex_high_get_thread(void *arg) /* High priority (waiting for mutex) */
             t_mdelay(600);
         }
         i++;
-        if (i == 255)
+        if (255 == i)
             i = 0;
         t_mdelay(50);
     }
@@ -418,9 +418,9 @@ void mid_occupy_thread(void *arg) /* Medium priority (create CPU interference) *
     while (1)
     {
         i++;
-        if (i % 50 == 0)
+        if (0 == i % 50)
             t_printf("MED  : running i=%d\n", i);
-        if (i == 255)
+        if (255 == i)
             i = 0;
         /* No mutex usage, purely occupy time slice */
         t_mdelay(40);
@@ -433,7 +433,7 @@ void mutex_low_get_thread(void *arg) /* Low priority (acquire mutex first and ho
     t_uint8_t base_prio_saved = 0;
     while (1)
     {
-        if (once == 0)
+        if (0 == once)
         {
             if (T_OK == T_MUTEX_RECURSIVE_ACQUIRE(mutex1_handle, TO_WAITING_FOREVER))
             {

@@ -122,7 +122,7 @@ void t_sched_switch(void)
     prev_thread = t_current_thread;
     t_current_thread = next_thread;
 
-    if (prev_thread && prev_thread->status == TO_THREAD_RUNNING)
+    if (prev_thread && TO_THREAD_RUNNING == prev_thread->status)
         prev_thread->status = TO_THREAD_READY;
 
     next_thread->status = TO_THREAD_RUNNING;
@@ -140,7 +140,7 @@ void t_sched_switch(void)
 void t_sched_remove_thread(t_thread_t *thread)
 {
     register t_uint32_t level;
-    if (thread == NULL)
+    if (!thread)
         return;
 
     level = t_irq_disable();
@@ -163,7 +163,7 @@ void t_sched_insert_thread(t_thread_t *thread)
 {
     register t_uint32_t level;
 
-    if (thread == NULL)
+    if (!thread)
         return;
 
     level = t_irq_disable();
