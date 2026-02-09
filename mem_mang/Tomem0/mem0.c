@@ -1,5 +1,5 @@
 /**
- * @file mem_mang.c
+ * @file mem0.c
  * @brief  
  * A sample implementation of t_malloc() and t_free() that permits
  * allocated blocks to be freed, but does not combine adjacent free blocks
@@ -13,10 +13,10 @@
 #include <stddef.h>
 
 #if (TO_USING_DYNAMIC_ALLOCATION)
-#define TO_BYTE_ALIGN           (8)
+#define T_BYTE_ALIGN            8u
 /* A few bytes might be lost to byte aligning the memory start address. */
-#define TO_ADJUSTED_MEM_SIZE    (TO_DYNAMIC_MEM_SIZE - TO_BYTE_ALIGN)
-#define TO_BYTE_ALIGN_MASK      (TO_BYTE_ALIGN - 1)
+#define T_ADJUSTED_MEM_SIZE     (TO_DYNAMIC_MEM_SIZE - T_BYTE_ALIGN)
+#define T_BYTE_ALIGN_MASK       (T_BYTE_ALIGN - 1u)
 
 /*
  * Initialises the memory structures before their first use.
@@ -33,7 +33,7 @@ typedef struct
     size_t block_size; /*<< The size of the free block. */
 } t_mem_link_t;
 
-static const t_uint16_t t_struct_size = ((sizeof(t_mem_link_t) + (TO_BYTE_ALIGN_MASK)) & ~(TO_BYTE_ALIGN_MASK));
+static const t_uint16_t t_struct_size = ((sizeof(t_mem_link_t) + (T_BYTE_ALIGN_MASK)) & ~(T_BYTE_ALIGN_MASK));
 #define t_block_size_min    ((size_t)(t_struct_size * 2))
 
 /* Create a sentinel of free list. */
@@ -41,7 +41,7 @@ static t_list_t free_list;
 
 /* Keeps track of the number of free bytes remaining, but says nothing about
 fragmentation. */
-static size_t t_free_bytes_remain = TO_ADJUSTED_MEM_SIZE;
+static size_t t_free_bytes_remain = T_ADJUSTED_MEM_SIZE;
 
 /* STATIC FUNCTIONS ARE DEFINED AS MACROS TO MINIMIZE THE FUNCTION CALL DEPTH. */
 
@@ -93,14 +93,14 @@ void *t_malloc(size_t wanted_size)
             wanted_size += t_struct_size;
 
             /* Ensure that blocks are always aligned to the required number of bytes. */
-            if ((wanted_size & TO_BYTE_ALIGN_MASK) != 0)
+            if ((wanted_size & T_BYTE_ALIGN_MASK) != 0)
             {
                 /* Byte alignment required. */
-                wanted_size += (TO_BYTE_ALIGN - (wanted_size & TO_BYTE_ALIGN_MASK));
+                wanted_size += (T_BYTE_ALIGN - (wanted_size & T_BYTE_ALIGN_MASK));
             }
         }
 
-        if ((wanted_size > 0) && (wanted_size < TO_ADJUSTED_MEM_SIZE))
+        if ((wanted_size > 0) && (wanted_size < T_ADJUSTED_MEM_SIZE))
         {
             /* Blocks are stored in byte order - traverse the list from the start
             (smallest) block until one of adequate size is found. */
@@ -193,12 +193,12 @@ static void t_mem_init(void)
     t_list_init(&free_list);
     
     /* Ensure the memory starts on a correctly aligned boundary. */
-    align_mem = (t_uint8_t *)(((size_t)t_mem + TO_BYTE_ALIGN_MASK) & (~((size_t)(TO_BYTE_ALIGN_MASK))));
+    align_mem = (t_uint8_t *)(((size_t)t_mem + T_BYTE_ALIGN_MASK) & (~((size_t)(T_BYTE_ALIGN_MASK))));
 
     /* To start with there is a single free block that is sized to take up the
     entire memory space. */
     first_free_block = (void *)align_mem;
-    first_free_block->block_size = TO_ADJUSTED_MEM_SIZE;
+    first_free_block->block_size = T_ADJUSTED_MEM_SIZE;
     t_list_insert_after(&free_list, &first_free_block->tlist);
 }
 /*-----------------------------------------------------------*/

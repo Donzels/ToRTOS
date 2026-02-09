@@ -35,7 +35,7 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 
-#define IS_ENABLE_STATIC_ALLOCATION_TEST    1
+#define IS_ENABLE_STATIC_ALLOCATION_TEST    0
 #define IS_ENABLE_DYNAMIC_ALLOCATION_TEST   (1 - IS_ENABLE_STATIC_ALLOCATION_TEST)
 
 #define IS_ENABLE_SEMA_TEST     1
@@ -43,6 +43,15 @@
 #define IS_ENABLE_QUEUE_TEST    0
 
 #define THREAD_STACK_SIZE       512
+
+#define IS_USE_RTT_DEBUG        1        
+
+#if IS_USE_RTT_DEBUG
+#include "SEGGER_RTT.h"
+#define DEBUG_OUT(fmt, ...)      SEGGER_RTT_printf(0, fmt "\r\n", ##__VA_ARGS__)  
+#else
+#define DEBUG_OUT(fmt, ...)      t_printf(fmt "\r\n", ##__VA_ARGS__)
+#endif
 
 /* USER CODE END PD */
 
@@ -162,6 +171,9 @@ int main(void)
     MX_DMA_Init();
     MX_USART1_UART_Init();
     /* USER CODE BEGIN 2 */
+#if IS_USE_RTT_DEBUG
+    SEGGER_RTT_Init();
+#endif
     t_tortos_init();
 #if (IS_ENABLE_SEMA_TEST)
 #if (IS_ENABLE_STATIC_ALLOCATION_TEST)
@@ -357,7 +369,7 @@ void sema_send_thread(void *arg)
         float f = 3.14;
         f *= 2;
         HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
-        t_printf("sema send, f=%f, arg=0x%x\n", f, i);
+        DEBUG_OUT("sema send, f=%f, arg=0x%x", f, i);
         t_mdelay(500);
         T_SEMA_RELEASE(sema1_handle);
         T_SEMA_RELEASE(sema1_handle);
@@ -372,7 +384,7 @@ void sema_recv_thread(void *arg)
         T_SEMA_ACQUIRE(sema1_handle, TO_WAITING_FOREVER);
         float f = 6.14;
         f *= -3;
-        t_printf("sema recv, f=%f, arg=0x%x\n", f, i);
+        DEBUG_OUT("sema recv, f=%f, arg=0x%x", f, i);
     }
 }
 #endif
@@ -387,12 +399,12 @@ void mutex_high_get_thread(void *arg) /* High priority (waiting for mutex) */
         if (0 == phase)
         {
             t_mdelay(100); /* Let low priority thread acquire mutex first to create inversion */
-            t_printf("HIGH : try take mutex\n");
+            DEBUG_OUT("HIGH : try take mutex");
             if (T_OK == T_MUTEX_RECURSIVE_ACQUIRE(mutex1_handle, TO_WAITING_FOREVER))
             {
-                t_printf("HIGH : got mutex (after inheritance) i=%d\n", i);
+                DEBUG_OUT("HIGH : got mutex (after inheritance) i=%d", i);
                 T_MUTEX_RECURSIVE_RELEASE(mutex1_handle);
-                t_printf("HIGH : released mutex\n");
+                DEBUG_OUT("HIGH : released mutex");
                 phase = 1;
             }
         }
@@ -419,7 +431,7 @@ void mid_occupy_thread(void *arg) /* Medium priority (create CPU interference) *
     {
         i++;
         if (0 == i % 50)
-            t_printf("MED  : running i=%d\n", i);
+            DEBUG_OUT("MED  : running i=%d", i);
         if (255 == i)
             i = 0;
         /* No mutex usage, purely occupy time slice */
@@ -438,7 +450,7 @@ void mutex_low_get_thread(void *arg) /* Low priority (acquire mutex first and ho
             if (T_OK == T_MUTEX_RECURSIVE_ACQUIRE(mutex1_handle, TO_WAITING_FOREVER))
             {
                 base_prio_saved = t_current_thread->current_priority;
-                t_printf("LOW  : took mutex, do long work (base prio=%d)\n",
+                DEBUG_OUT("LOW  : took mutex, do long work (base prio=%d)",
                          base_prio_saved);
 
                 /* Simulate long task split into segments, 
@@ -449,14 +461,14 @@ void mutex_low_get_thread(void *arg) /* Low priority (acquire mutex first and ho
                     if (t_current_thread)
                     {
                         if (t_current_thread->current_priority != base_prio_saved)
-                            t_printf("LOW  : inherited priority -> %d (seg=%d)\n",
+                            DEBUG_OUT("LOW  : inherited priority -> %d (seg=%d)",
                                      t_current_thread->current_priority, seg);
                     }
                 }
 
-                t_printf("LOW  : releasing mutex\n");
+                DEBUG_OUT("LOW  : releasing mutex");
                 T_MUTEX_RECURSIVE_RELEASE(mutex1_handle);
-                t_printf("LOW  : released mutex (should drop back to prio=%d)\n",
+                DEBUG_OUT("LOW  : released mutex (should drop back to prio=%d)",
                          base_prio_saved);
                 once = 1;
             }
@@ -495,7 +507,7 @@ void queue_send_thread(void *arg)
             .i = i
         };
         T_QUEUE_SEND(queue1_handle, &msg_test, 0);
-        t_printf("queue send, tick=%d, i=%d, f=%f\r\n", msg_test.time, msg_test.i, msg_test.f);
+        DEBUG_OUT("queue send, tick=%d, i=%d, f=%f", msg_test.time, msg_test.i, msg_test.f);
         j++;
         if(j>TEST_QUEUE_LENGTH-1)
         {
@@ -503,7 +515,7 @@ void queue_send_thread(void *arg)
             msg_test.i = 66;
             msg_test.f = 7.77;
             T_QUEUE_SEND(queue1_handle, &msg_test, 500);/* send one more after queue is full */
-            t_printf("send one more queue, tick=%d, i=%d, f=%f\r\n", msg_test.time, msg_test.i, msg_test.f);
+            DEBUG_OUT("send one more queue, tick=%d, i=%d, f=%f", msg_test.time, msg_test.i, msg_test.f);
             j=0;
             t_mdelay(500);
         }        
@@ -515,7 +527,7 @@ void queue_recv_thread(void *arg)
     {
         msg_test_t msg_test;
         T_QUEUE_RECV(queue1_handle, &msg_test, TO_WAITING_FOREVER);
-        t_printf("queue recv, tick=%d, i=%d, f=%f\r\n", msg_test.time, msg_test.i, msg_test.f);
+        DEBUG_OUT("queue recv, tick=%d, i=%d, f=%f", msg_test.time, msg_test.i, msg_test.f);
     }
 }
 #endif
@@ -547,7 +559,7 @@ void assert_failed(uint8_t *file, uint32_t line)
 {
     /* USER CODE BEGIN 6 */
     /* User can add his own implementation to report the file name and line number,
-       ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
+       ex: printf("Wrong parameters value: file %s on line %d", file, line) */
     /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */

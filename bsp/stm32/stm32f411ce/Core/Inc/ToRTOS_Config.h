@@ -20,7 +20,7 @@
 #define TO_IDLE_STACK_SIZE          256  /* define idle thread stack size */
 
 #define TO_USING_STATIC_ALLOCATION  1
-#define TO_USING_DYNAMIC_ALLOCATION 0
+#define TO_USING_DYNAMIC_ALLOCATION 1
 #if (TO_USING_DYNAMIC_ALLOCATION)
 #define TO_DYNAMIC_MEM_SIZE         10240    /* bytes */
 #endif

@@ -339,7 +339,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32F411xE</Define>
               <Undefine></Undefine>
-              <IncludePath>../Core/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/CMSIS/Include;../../../../include</IncludePath>
+              <IncludePath>../Core/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/CMSIS/Include;../../../../include;..\DEBUG\SeggerRTT\Inc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -559,9 +559,9 @@
               <FilePath>..\..\..\..\src\timer.c</FilePath>
             </File>
             <File>
-              <FileName>mem_mang.c</FileName>
+              <FileName>mem1.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\src\mem_mang.c</FilePath>
+              <FilePath>..\..\..\..\mem_mang\Tomem1\mem1.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -577,6 +577,21 @@
               <FileName>cpuport.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\libcpu\CM4F\cpuport.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Debug</GroupName>
+          <Files>
+            <File>
+              <FileName>SEGGER_RTT.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\DEBUG\SeggerRTT\Src\SEGGER_RTT.c</FilePath>
+            </File>
+            <File>
+              <FileName>SEGGER_RTT_printf.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\DEBUG\SeggerRTT\Src\SEGGER_RTT_printf.c</FilePath>
             </File>
           </Files>
         </Group>

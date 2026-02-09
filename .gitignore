@@ -1,0 +1,71 @@
+#=======================================
+# OS metadata files
+#=======================================
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+#=======================================
+# Editor and IDE temp files
+#=======================================
+*.swp
+*.swo
+*~
+.*.swp
+*.log
+*.log.lock
+
+# Keil5 user config files (do not commit)
+*.uvoptx
+*.uvguix.*
+*.bak
+*.tmp
+*.opt
+*.user
+*.lnp
+*.dep
+*.crf
+
+#=======================================
+# Build intermediates
+#=======================================
+# Object files
+*.o
+*.d
+*.axf
+*.elf
+*.map
+*.log
+*.rpt
+*.htm
+*.lst
+*.trc
+
+# Firmware images
+*.hex
+*.bin
+*.srec
+
+# Output directories (recommended)
+/Build/
+/Output/
+/Objects/
+/Listings/
+/temp/
+DEBUG/
+.vscode/
+
+# Keil/JLink logs
+JLinkLog.txt
+
+#=======================================
+# Project backup files
+#=======================================
+*.backup
+*.old
+*.orig
+*.save
