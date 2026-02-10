@@ -149,6 +149,7 @@ t_status_t t_byte_pool_create(t_byte_pool_t *pool,
                               size_t         pool_size)
 {
     t_uint8_t *aligned_start;
+    size_t     aligned_size;
     t_uint8_t *end_block;
 
     if (!pool || !pool_start || pool_size < (T_BYTE_BLOCK_MIN * 2u))
@@ -158,15 +159,15 @@ t_status_t t_byte_pool_create(t_byte_pool_t *pool,
     aligned_start = (t_uint8_t *)
         (((size_t)pool_start + T_BYTE_ALIGN_MASK) & ~((size_t)T_BYTE_ALIGN_MASK));
 
-    /* Shrink usable size to compensate for alignment and round down. */
-    pool_size -= (size_t)(aligned_start - (t_uint8_t *)pool_start);
-    pool_size &= ~((size_t)T_BYTE_ALIGN_MASK);
+    /* Align the size: compensate for alignment and round down. */
+    aligned_size = pool_size - (size_t)(aligned_start - (t_uint8_t *)pool_start);
+    aligned_size &= ~((size_t)T_BYTE_ALIGN_MASK);
 
     pool->pool_start = aligned_start;
-    pool->pool_size  = pool_size;
+    pool->pool_size  = aligned_size;
 
     /* Sentinel sits at the very end of the pool. */
-    end_block = aligned_start + pool_size - T_BYTE_BLOCK_HEADER_SIZE;
+    end_block = aligned_start + aligned_size - T_BYTE_BLOCK_HEADER_SIZE;
 
     /* First block: FREE – covers the whole pool except the sentinel. */
     BLOCK_NEXT(aligned_start)  = end_block;
@@ -178,7 +179,7 @@ t_status_t t_byte_pool_create(t_byte_pool_t *pool,
 
     pool->block_list  = aligned_start;
     pool->search_ptr  = aligned_start;
-    pool->available   = pool_size - (2u * T_BYTE_BLOCK_HEADER_SIZE);
+    pool->available   = aligned_size - (2u * T_BYTE_BLOCK_HEADER_SIZE);
     pool->fragments   = 1u;
     pool->pool_id     = T_BYTE_POOL_MAGIC;
 

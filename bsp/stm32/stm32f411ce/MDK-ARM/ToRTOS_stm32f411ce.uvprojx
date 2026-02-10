@@ -561,7 +561,7 @@
             <File>
               <FileName>mem1.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\mem_mang\Tomem1\mem1.c</FilePath>
+              <FilePath>..\..\..\..\mem_mang\mem1.c</FilePath>
             </File>
           </Files>
         </Group>
