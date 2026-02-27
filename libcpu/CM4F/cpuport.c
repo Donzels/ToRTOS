@@ -10,7 +10,7 @@
 #include "ToRTOS.h"
 
 #define INITIAL_XPSR       0x01000000UL   /* Thumb mode bit set in xPSR */
-#define INITIAL_EXC_RETURN 0xFFFFFFFDUL   /* Return to Thread mode, use PSP, no FPU */
+#define INITIAL_EXC_RETURN 0xFFFFFFFDUL   /* Return to Thread mode, use PSP, standard frame (bit4=1: no FPU context) */
 
 /**
  * @brief Saved register frame (software stacked + hardware stacked).

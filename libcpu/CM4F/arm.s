@@ -88,7 +88,7 @@ t_first_switch_task PROC
     mov     r0, #1
     str     r0, [r1]                 ; Set switch flag    
     ;-----------------------------
-    ; Initialize thread pointer variables for first switch
+    ; Set SysTick and PendSV to LOWEST priority
     ;-----------------------------
     ldr     r0, =SCB_SHPR3_REG       ; Load address of SHPR3 (SysTick/PendSV priority)
     ldr     r2, [r0]                 ; Read current SHPR3 value
@@ -98,17 +98,6 @@ t_first_switch_task PROC
     orr     r1, r1, r3               ; Merge SysTick and PendSV masks
  
     orr     r1, r1, r2               ; Merge with existing priority values
-    str     r1, [r0]                 ; Write back new priority values to SHPR3
-
-    ;-----------------------------
-    ; Set SysTick and PendSV to LOWEST priority
-    ;-----------------------------
-    ldr     r0, =SCB_SHPR3_REG       ; Load address of SHPR3 (SysTick/PendSV priority)
-    ldr     r2, [r0]                 ; Read current SHPR3 value
-    ldr     r1, =SCB_SYSTICK_PRI     ; Load SysTick priority mask
-    orr     r1, r1, r2               ; Merge with existing priority values
-    ldr     r1, =SCB_PENDSV_PRI      ; Load PendSV priority mask
-    orr     r1, r1, r2               ; Merge with existing priority values (keep other bits)
     str     r1, [r0]                 ; Write back new priority values to SHPR3
     
     ;-----------------------------
@@ -229,7 +218,7 @@ PendSV_Handler   PROC
     ; Check if FPU context is active (EXC_RETURN bit 4 = 0 -> FP regs stacked)
     tst     lr, #0x10               ; Test bit 4 of LR (EXC_RETURN value)
     it      eq                      ; If bit 4=0 (EQ), execute next instruction
-    vstmdbeq r1!, {s16-s31}         ; Save FPU registers S16-S31 to stack (increment SP after)
+    vstmdbeq r1!, {s16-s31}         ; Save FPU registers S16-S31 to stack (decrement SP before)
 
     ; Save integer callee-saved registers (r4-r11) + LR (for exception return)
     stmdb   r1!, {r4-r11, lr}       ; Store r4-r11 + LR to stack (decrement SP before)
