@@ -88,7 +88,7 @@ void t_sched_resume(void);
 void t_sched_switch(void);
 void t_sched_remove_thread(t_thread_t *thread);
 void t_sched_insert_thread(t_thread_t *thread);
-void t_thread_rotate_same_prio(void);
+void t_thread_timeslice_expire(void);
 void t_cleanup_waiting_termination_threads(void);
 
 /**

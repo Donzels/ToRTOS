@@ -143,7 +143,7 @@ void t_tick_increase(void)
     {
         thread->remaining_tick = thread->init_tick;
         t_irq_enable(level);        
-        t_thread_rotate_same_prio();
+        t_thread_timeslice_expire();
     }
     else
     {

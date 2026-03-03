@@ -177,28 +177,26 @@ void t_sched_insert_thread(t_thread_t *thread)
 }
 
 /**
- * @brief Voluntarily yield CPU within same priority group (round robin).
+ * @brief Handle timeslice expiration: rotate within same priority and check for higher priority tasks.
  */
-void t_thread_rotate_same_prio(void)
+void t_thread_timeslice_expire(void)
 {
     register t_uint32_t level;
 
     level = t_irq_disable();
 
-    /* If only one thread at this priority, no rotation needed. */
-    if(t_list_length(&t_thread_ready_lists[t_current_thread->current_priority]) <= 1U)
+    /* If multiple threads at this priority, rotate them. */
+    if(t_list_length(&t_thread_ready_lists[t_current_thread->current_priority]) > 1U)
     {
-        t_irq_enable(level);
-        return;
+        /* Move current thread to queue tail (before head sentinel). */
+        t_list_delete(&t_current_thread->tlist);
+        t_list_insert_before(
+            &(t_thread_ready_lists[t_current_thread->current_priority]),
+            &(t_current_thread->tlist));
     }
-
-    /* Move current thread to queue tail (before head sentinel). */
-    t_list_delete(&t_current_thread->tlist);
-    t_list_insert_before(
-        &(t_thread_ready_lists[t_current_thread->current_priority]),
-        &(t_current_thread->tlist));
 
     t_irq_enable(level);
 
+    /* Always call t_sched_switch() to check for higher priority tasks. */
     t_sched_switch();
 }
