@@ -606,6 +606,8 @@ t_status_t t_queue_send(t_ipc_t *ipc, const void *data, t_int32_t timeout)
         return T_INVALID;
     while (1)
     {
+        level = t_irq_disable();
+    
         if (ipc->msg_waiting < ipc->length)
         {
             /* Write data to queue */
